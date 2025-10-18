@@ -14,13 +14,21 @@ fn main() {
                 eprintln!("{e}");
             }
 
-            let _ = tx.send(s);
+            // TODO:元の文字列の文字数を参照するようにする
+            let _ = tx.send(s.trim().to_string());
         }
     });
 
     loop {
         if let Ok(s) = rx.try_recv() {
-            println!("{s}")
+            for _ in 0..s.len() {
+                game.earn_cookies()
+            }
+
+            let current_cookies = game.current_cookies();
+            println!("{current_cookies}");
         }
+
+        game.update()
     }
 }
