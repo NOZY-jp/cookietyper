@@ -29,11 +29,14 @@ pub(crate) trait Facility {
     fn base_cost(&self) -> U512;
 }
 
-pub(crate) struct Facilities(HashMap<FacilityKey, Box<dyn Facility>>);
+pub(crate) struct Facilities {
+    inner: HashMap<FacilityKey, Box<dyn Facility>>,
+    multiplier: f64,
+}
 
 impl Facilities {
     pub(crate) fn displayed(&self) -> Vec<&dyn Facility> {
-        self.0
+        self.inner
             .values()
             .filter(|f| f.visual_state() == FacilityVisualState::Displayed)
             .map(|v| &**v)
@@ -44,7 +47,10 @@ impl Facilities {
 impl Default for Facilities {
     fn default() -> Self {
         let facilities = [Cursor::entry()];
-        Self(HashMap::from(facilities))
+        Self {
+            inner: HashMap::from(facilities),
+            multiplier: 1.0,
+        }
     }
 }
 
