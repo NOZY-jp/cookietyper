@@ -3,9 +3,27 @@ use std::{io::stdin, thread};
 use cookietyper_core::Game;
 
 enum Event {
+    InvalidCommand,
     EarnCookies(i32),
     ShowCookiesAmount,
     ShowCps,
+}
+
+impl From<String> for Event {
+    fn from(s: String) -> Self {
+        let s = s.trim();
+
+        if !s.starts_with("/") {
+            let s_num = s.len();
+            return Event::EarnCookies(s_num as i32);
+        }
+
+        match s {
+            "/cc" => Event::ShowCookiesAmount,
+            "/cps" => Event::ShowCps,
+            _ => Event::InvalidCommand,
+        }
+    }
 }
 
 fn main() {
@@ -21,11 +39,7 @@ fn main() {
                 eprintln!("{e}");
             }
 
-            let s_num = s.trim().len();
-            let event = Event::EarnCookies(s_num as i32);
-
-            // TODO:元の文字列の文字数を参照するようにする
-            let _ = tx.send(event);
+            let _ = tx.send(Event::from(s));
         }
     });
 
@@ -44,6 +58,9 @@ fn main() {
                 Event::ShowCps => {
                     let cps = game.cps();
                     println!("{cps}");
+                }
+                Event::InvalidCommand => {
+                    println!("Invalid Command! Try Again!")
                 }
             }
         }
