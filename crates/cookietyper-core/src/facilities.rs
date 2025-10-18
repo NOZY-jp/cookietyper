@@ -29,10 +29,14 @@ pub(crate) trait Facility {
             <= current_cookies.as_::<f64>()
     }
     fn visual_state(&self) -> FacilityVisualState;
-
-    fn amount(&self) -> u32;
+    fn base_cps(&self) -> f64;
     fn base_cost(&self) -> U512;
-    fn cps(&self) -> I512;
+    fn multiplier(&self) -> f64;
+    fn amount(&self) -> u32;
+    fn cps(&self) -> I512 {
+        let cps = self.base_cps() * self.multiplier();
+        I512::cast_from(cps)
+    }
 }
 
 pub(crate) struct Facilities {
