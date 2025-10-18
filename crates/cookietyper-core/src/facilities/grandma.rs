@@ -1,25 +1,22 @@
-use bnum::{
-    cast::CastFrom as _,
-    types::{I512, U512},
-};
+use bnum::{cast::CastFrom, types::I512};
 
 use crate::facilities::{Facility, FacilityKey, FacilityVisualState};
 
-pub(crate) struct Cursor {
-    multiplier: f64,
+pub(crate) struct Grandma {
     amount: u32,
+    multiplier: f64,
 }
 
-impl Cursor {
-    const BASE_CPS: f64 = 0.1;
+impl Grandma {
+    const BASE_CPS: f64 = 1.0;
 }
 
-impl Facility for Cursor {
+impl Facility for Grandma {
     fn key() -> FacilityKey {
-        FacilityKey::Cursor
+        FacilityKey::Grandma
     }
 
-    fn visual_state(&self) -> FacilityVisualState {
+    fn visual_state(&self) -> super::FacilityVisualState {
         FacilityVisualState::Covered
     }
 
@@ -27,17 +24,17 @@ impl Facility for Cursor {
         self.amount
     }
 
-    fn base_cost(&self) -> U512 {
-        15u32.into()
+    fn base_cost(&self) -> bnum::types::U512 {
+        100u32.into()
     }
 
     fn cps(&self) -> bnum::types::I512 {
-        let cps = Cursor::BASE_CPS * self.multiplier;
+        let cps = Grandma::BASE_CPS * self.multiplier;
         I512::cast_from(cps)
     }
 }
 
-impl Default for Cursor {
+impl Default for Grandma {
     fn default() -> Self {
         Self {
             multiplier: 1.0,

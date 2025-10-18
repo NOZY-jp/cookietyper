@@ -4,8 +4,10 @@ use bnum::{
 };
 
 use crate::facilities::cursor::Cursor;
+use crate::facilities::grandma::Grandma;
 use std::collections::HashMap;
 pub(crate) mod cursor;
+pub(crate) mod grandma;
 
 pub(crate) trait Facility {
     fn key() -> FacilityKey
@@ -56,7 +58,7 @@ impl Facilities {
 
 impl Default for Facilities {
     fn default() -> Self {
-        let facilities = [Cursor::entry()];
+        let facilities = [Cursor::entry(), Grandma::entry()];
         Self {
             inner: HashMap::from(facilities),
             multiplier: 1.0,
@@ -67,6 +69,7 @@ impl Default for Facilities {
 #[derive(Hash, PartialEq, Eq)]
 pub(crate) enum FacilityKey {
     Cursor,
+    Grandma,
 }
 
 #[derive(PartialEq, Eq)]
