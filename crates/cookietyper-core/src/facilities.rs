@@ -1,4 +1,7 @@
-use bnum::{cast::As, types::U512};
+use bnum::{
+    cast::{As, CastFrom as _},
+    types::{I512, U512},
+};
 
 use crate::facilities::cursor::Cursor;
 use std::collections::HashMap;
@@ -27,6 +30,7 @@ pub(crate) trait Facility {
 
     fn amount(&self) -> u32;
     fn base_cost(&self) -> U512;
+    fn cps(&self) -> I512;
 }
 
 pub(crate) struct Facilities {
@@ -41,6 +45,12 @@ impl Facilities {
             .filter(|f| f.visual_state() == FacilityVisualState::Displayed)
             .map(|v| &**v)
             .collect()
+    }
+
+    pub(crate) fn total_cps(&self) -> I512 {
+        self.displayed()
+            .iter()
+            .fold(I512::ZERO, |sum, facility| sum + facility.cps())
     }
 }
 
