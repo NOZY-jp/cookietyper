@@ -1,3 +1,6 @@
+use chrono::{DateTime, Local};
+use color_eyre::eyre;
+
 use crate::facilities::Facilities;
 
 /// The main game state structure
@@ -7,12 +10,15 @@ pub struct Game {
     cpt_multiplier: f64,
     current_cookies: f64,
     facilities: Facilities,
+    prev_frame: DateTime<Local>,
 }
 
 impl Game {
     /// update game tick by tick
     pub fn update(&mut self) {
-        self.facilities.update_all();
+        let time_delta = (self.prev_frame - Local::now()).abs();
+        self.current_cookies += self.facilities.delta_cookies(time_delta);
+        self.prev_frame = Local::now();
     }
 
     /// earn_cookies by calculating base cps and several multipliers
@@ -28,6 +34,10 @@ impl Game {
     pub fn cps(&self) -> f64 {
         self.facilities.total_cps()
     }
+
+    pub fn purchase_facility(&mut self) -> eyre::Result<()> {
+        self.facilities.purchase(&mut self.current_cookies)
+    }
 }
 
 impl Default for Game {
@@ -38,6 +48,7 @@ impl Default for Game {
             cpt_multiplier: 1.0,
             current_cookies: 0.0,
             facilities: Facilities::default(),
+            prev_frame: Local::now(),
         }
     }
 }

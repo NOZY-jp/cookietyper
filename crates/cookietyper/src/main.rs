@@ -1,5 +1,9 @@
 use cookietyper_core::Game;
-use std::{io::stdin, thread};
+use std::{
+    io::stdin,
+    thread::{self, sleep},
+    time::Duration,
+};
 
 mod event;
 
@@ -38,12 +42,18 @@ fn main() {
                     let cps = game.cps();
                     println!("{cps}");
                 }
+                Event::PurchaseFacility => {
+                    if let Err(e) = game.purchase_facility() {
+                        println!("{e}");
+                    }
+                }
                 Event::InvalidCommand => {
                     println!("Invalid Command! Try Again!")
                 }
             }
         }
 
-        game.update()
+        game.update();
+        sleep(Duration::from_millis((1.0 / 60.0 * 1000.0) as u64));
     }
 }
