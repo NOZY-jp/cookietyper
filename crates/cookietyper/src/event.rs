@@ -1,10 +1,12 @@
+use cookietyper_core::FacilityKey;
+
 #[derive(Debug, PartialEq, Eq)]
 pub(crate) enum Event {
     InvalidCommand,
     EarnCookies(i32),
     ShowCookiesAmount,
     ShowCps,
-    PurchaseFacility,
+    PurchaseFacility(FacilityKey),
 }
 
 impl From<String> for Event {
@@ -19,7 +21,7 @@ impl From<String> for Event {
         match s {
             "/cc" => Event::ShowCookiesAmount,
             "/cps" => Event::ShowCps,
-            "/f buy" => Event::PurchaseFacility,
+            s if s.starts_with("/f buy") => Event::PurchaseFacility(FacilityKey::Cursor),
             _ => Event::InvalidCommand,
         }
     }
